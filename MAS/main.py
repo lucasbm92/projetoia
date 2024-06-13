@@ -10,6 +10,7 @@ from sklearn.utils import class_weight
 import numpy as np
 from imblearn.over_sampling import SMOTE
 from sklearn.utils import class_weight
+import matplotlib.pyplot as plt
 
 # Load dataset
 df = pd.read_csv('MAS\dataset\predictive_maintenance.csv')
@@ -44,7 +45,27 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # Train the model with class weights
-model.fit(X_train, y_train, epochs=50, batch_size=32, class_weight=class_weights)
+history = model.fit(X_train, y_train, epochs=50, batch_size=32, class_weight=class_weights)
+
+# Plot training & validation accuracy values
+plt.figure(figsize=(12, 6))
+plt.subplot(1, 2, 1)
+plt.plot(history.history['accuracy'])
+plt.title('Model accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('Epoch')
+plt.legend(['Train'], loc='upper left')
+
+# Plot training & validation loss values
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'])
+plt.title('Model loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend(['Train'], loc='upper left')
+
+plt.tight_layout()
+plt.show()
 
 # Make predictions and evaluate model
 y_pred = (model.predict(X_test) > 0.7).astype("int32")
