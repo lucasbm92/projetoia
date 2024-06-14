@@ -1,4 +1,3 @@
-# Import necessary libraries
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.metrics import classification_report
@@ -11,43 +10,45 @@ import numpy as np
 from imblearn.over_sampling import SMOTE
 from sklearn.utils import class_weight
 import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
 
-# Load dataset
+# Carrega o dataset
 df = pd.read_csv('MAS\dataset\predictive_maintenance.csv')
 
-# Preprocessing
+# Pré-processamento
 le = LabelEncoder()
 df['Type'] = le.fit_transform(df['Type'])
 df['Failure Type'] = le.fit_transform(df['Failure Type'])
 
-# Split data into features and target variable
+# Divide o dataset em features e target
 X = df.drop(['UDI', 'Product ID', 'Target'], axis=1)
 y = df['Target']
 
-# Split data into training and test sets
+# Divide o dataset em treino e teste
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Rebalance classes
+# Realiza o balanceamento das classes
 smote = SMOTE(random_state=42)
 X_train, y_train = smote.fit_resample(X_train, y_train)
 
-# Calculate class weights
+# Calcula os pesos das classes
 weights = class_weight.compute_sample_weight('balanced', y_train)
 class_weights = dict(enumerate(weights))
 
-# Define the model
+# Define a arquitetura da rede neural
 model = Sequential()
 model.add(Dense(32, input_dim=X_train.shape[1], activation='relu'))
 model.add(Dense(16, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 
-# Compile the model
+# Compila o modelo
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-# Train the model with class weights
+# Treina o modelo com pesos das classes e armaena o histórico
 history = model.fit(X_train, y_train, epochs=50, batch_size=32, class_weight=class_weights)
 
-# Plot training & validation accuracy values
+# Plota os valores de treino e accuracy
 plt.figure(figsize=(12, 6))
 plt.subplot(1, 2, 1)
 plt.plot(history.history['accuracy'])
@@ -56,7 +57,7 @@ plt.ylabel('Accuracy')
 plt.xlabel('Epoch')
 plt.legend(['Train'], loc='upper left')
 
-# Plot training & validation loss values
+# Plota os valores de treino e loss
 plt.subplot(1, 2, 2)
 plt.plot(history.history['loss'])
 plt.title('Model loss')
@@ -65,8 +66,18 @@ plt.xlabel('Epoch')
 plt.legend(['Train'], loc='upper left')
 
 plt.tight_layout()
-plt.show()
+plt.show(block=False)
 
-# Make predictions and evaluate model
+# Faz a predição e exibe o relatório de classificação
 y_pred = (model.predict(X_test) > 0.7).astype("int32")
 print(classification_report(y_test, y_pred))
+
+# Computa a matriz de confusão
+cm = confusion_matrix(y_test, y_pred)
+
+# Plota a matriz de confusão
+plt.figure(figsize=(10,7))
+sns.heatmap(cm, annot=True, fmt='d')
+plt.xlabel('Predicted')
+plt.ylabel('Truth')
+plt.show()
