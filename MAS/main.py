@@ -12,6 +12,7 @@ from sklearn.utils import class_weight
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
+from keras.optimizers import Adam
 
 # Carrega o dataset
 df = pd.read_csv('MAS\dataset\predictive_maintenance.csv')
@@ -36,14 +37,25 @@ X_train, y_train = smote.fit_resample(X_train, y_train)
 weights = class_weight.compute_sample_weight('balanced', y_train)
 class_weights = dict(enumerate(weights))
 
-# Define a arquitetura da rede neural
+# # Define a arquitetura da rede neural
+# model = Sequential()
+# model.add(Dense(32, input_dim=X_train.shape[1], activation='relu'))
+# model.add(Dense(16, activation='relu'))
+# model.add(Dense(1, activation='sigmoid'))
+# learning_rate = 0.01 # Define a taxa de aprendizagem
+
 model = Sequential()
-model.add(Dense(32, input_dim=X_train.shape[1], activation='relu'))
+model.add(Dense(64, activation='relu', input_shape=(X_train.shape[1],)))
+model.add(Dense(32, activation='relu'))
 model.add(Dense(16, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
+learning_rate = 0.02
 
-# Compila o modelo
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+# Cria o otimizador Adam com a taxa de aprendizagem definida
+opt = Adam(learning_rate=learning_rate)
+
+# Compila o modelo com o otimizador personalizado
+model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
 
 # Treina o modelo com pesos das classes e armaena o histórico
 history = model.fit(X_train, y_train, epochs=50, batch_size=32, class_weight=class_weights)
