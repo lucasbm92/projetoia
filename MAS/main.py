@@ -77,6 +77,7 @@ plt.ylabel('Loss')
 plt.xlabel('Epoch')
 plt.legend(['Train'], loc='upper left')
 
+# Ajusta o layout e exibe os gráficos
 plt.tight_layout()
 plt.show(block=False)
 
