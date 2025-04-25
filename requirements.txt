@@ -1,0 +1,16 @@
+# Dependências principais
+numpy
+pandas
+scikit-learn
+
+# Deep learning
+tensorflow
+keras
+
+# Visualização
+matplotlib
+seaborn
+
+# Utilitários
+jupyter
+notebook

@@ -1,21 +1,21 @@
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.metrics import classification_report
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import classification_report, confusion_matrix
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
+from tensorflow.keras.optimizers import Adam
 import pandas as pd
 from imblearn.over_sampling import SMOTE
-from sklearn.utils import class_weight
 import numpy as np
-from imblearn.over_sampling import SMOTE
-from sklearn.utils import class_weight
 import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix
 import seaborn as sns
-from keras.optimizers import Adam
+import tensorflow as tf
+
+import tensorflow as tf
+print(tf.__version__)
 
 # Carrega o dataset
-df = pd.read_csv('MAS\dataset\predictive_maintenance.csv')
+df = pd.read_csv('dataset/predictive_maintenance.csv')
 
 # Pré-processamento
 le = LabelEncoder()
